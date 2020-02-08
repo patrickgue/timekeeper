@@ -12,6 +12,11 @@ as published by Sam Hocevar. See the COPYING file for more details.
 
 int main(int argc, char **argv)
 {
+  if(argc <= 1) {
+    usage();
+    exit(ARGS_ERROR);
+  }
+  
   struct tk_entry *entries = malloc(0);
   FILE *f = fopen("./test/example.tkhistory","rw");
   int length;
@@ -27,13 +32,17 @@ int main(int argc, char **argv)
     }
     fclose (f);
     nr_of_entries = parse_tk_entries(buffer, &entries);
-    list_entries(entries, nr_of_entries);
   }
   else {
     fprintf(stderr, "Unable to read file\n");
+    exit(IO_ERROR);
   }
 
-  return 0;
+  if (strcmp(argv[1], "list") == 0) {
+    list_entries(entries, nr_of_entries);
+  }
+
+  return NO_ERROR;
 }
 
 
@@ -78,4 +87,10 @@ char *time_to_string(time_t time)
   struct tm *tm_time = localtime(&time);
   strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_time);
   return buffer;
+}
+
+
+void usage()
+{
+  // to be implemented
 }

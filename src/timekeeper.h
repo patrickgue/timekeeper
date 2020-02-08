@@ -7,6 +7,11 @@ as published by Sam Hocevar. See the COPYING file for more details.
 #ifndef TIMEKEEPER_H
 #define TIMEKEEPER_H
 
+#define NO_ERROR 0
+#define ARGS_ERROR 1
+#define IO_ERROR 2
+#define UNKN_ERROR 3
+
 #define DATE_TIME_FORMAT "%Y:%m:%d %H:%M:%S";
 
 #include <time.h>
@@ -21,5 +26,6 @@ struct tk_entry {
 int parse_tk_entries(char *, struct tk_entry **);
 void list_entries(struct tk_entry *, int);
 char *time_to_string(time_t);
+void usage();
 
 #endif /* TIMEKEEPER_H */
