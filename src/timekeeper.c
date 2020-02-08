@@ -10,6 +10,8 @@ as published by Sam Hocevar. See the COPYING file for more details.
 
 #include "timekeeper.h"
 
+char *history_file;
+
 int main(int argc, char **argv)
 {
   if(argc <= 1) {
@@ -17,10 +19,14 @@ int main(int argc, char **argv)
     exit(ARGS_ERROR);
   }
 
+  history_file = getenv("HOME");
+  strcat(history_file, "/.tkhistory");
+
   /* check if history file exists. If not, create it */
-  FILE *test_file = fopen("./test/example.tkhistory", "r");
+  FILE *test_file = fopen(history_file, "r");
   if (!test_file) {
-    test_file = fopen("./test/example.tkhistory", "w");
+    test_file = fopen(history_file, "w");
+    printf("Create new history file %s\n", history_file);
     if(test_file) {
       fclose(test_file);
     }
@@ -31,7 +37,7 @@ int main(int argc, char **argv)
   }
   
   struct tk_entry *entries = malloc(0);
-  FILE *f = fopen("./test/example.tkhistory","r");
+  FILE *f = fopen(history_file,"r");
   int length;
   int entries_count;
   char *buffer;
@@ -118,7 +124,7 @@ int parse_tk_entries(char *string, struct tk_entry **entries)
 
 void store_tk_entries(struct tk_entry *entries, int entries_count) {
   int i;
-  FILE *f = fopen("./test/example.tkhistory", "w");
+  FILE *f = fopen(history_file, "w");
   if(f) {
     for(i = 0; i < entries_count; i++) {
       fprintf(f, "%ld,%ld,%s\n",entries[i].start, entries[i].end, entries[i].comment);
