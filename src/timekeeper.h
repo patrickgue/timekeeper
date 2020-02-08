@@ -16,6 +16,8 @@ as published by Sam Hocevar. See the COPYING file for more details.
 #define DATE_TIME_FORMAT "%Y:%m:%d %H:%M:%S";
 
 #include <time.h>
+#include <stdbool.h>
+
 
 struct tk_entry {
   time_t start;
@@ -27,11 +29,12 @@ struct tk_entry {
 int parse_tk_entries(char *, struct tk_entry **);
 void store_tk_entries(struct tk_entry *, int);
 void list_entries(struct tk_entry *, int);
-char *datetime_to_string(time_t);
+char *datetime_to_string(time_t, bool);
 char *duration_to_string(time_t);
 
 int start_entry(struct tk_entry **, int, char *);
 void end_entry(struct tk_entry **, int, char *);
+void entry_status(struct tk_entry *, int);
 
 
 

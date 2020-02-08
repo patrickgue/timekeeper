@@ -7,6 +7,7 @@ as published by Sam Hocevar. See the COPYING file for more details.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "timekeeper.h"
 
@@ -89,6 +90,9 @@ int main(int argc, char **argv)
     }
     store_tk_entries(entries, entries_count);
   }
+  else if(strcmp(argv[1], "status") == 0) {
+    entry_status(entries, entries_count);
+  }
 
 
   free(entries);
@@ -102,7 +106,9 @@ int parse_tk_entries(char *string, struct tk_entry **entries)
   int entries_count = 0;
   tofree_l = strdup(string);
 
-  while ((token = strsep(&string, "\n")) != NULL) {
+  for(token = strtok(string, "\n");
+      token;
+      token = strtok(NULL, "\n")) {
     if(strlen(token) > 0) {
       tofree_v = strdup(token);
       char   *start = strsep(&token, ",");
@@ -116,7 +122,6 @@ int parse_tk_entries(char *string, struct tk_entry **entries)
       strcpy((*entries)[entries_count-1].comment, comment);
     }
   }
-
   free(tofree_l);
 
   return entries_count;
@@ -142,10 +147,10 @@ void list_entries(struct tk_entry *entries, int entries_count)
   int i;
   for(i = 0; i < entries_count; i++) {
     if(entries[i].end != 0) {
-      printf("(%2i) S: %s   E: %s  (%s)\n", i, datetime_to_string(entries[i].start), datetime_to_string(entries[i].end), entries[i].comment);
+      printf("(%03x) S: %s   E: %s   D: %s (%s)\n", i, datetime_to_string(entries[i].start, false), datetime_to_string(entries[i].end, false), duration_to_string(entries[i].end - entries[i].start), entries[i].comment);
     }
     else {
-      printf("(%2i) S: %s   D: (%s)           (%s)\n", i, datetime_to_string(entries[i].start), duration_to_string(time(NULL) - entries[i].start), entries[i].comment);
+      printf("(%03x) S: %s   Current             D: %s (%s)\n", i, datetime_to_string(entries[i].start, false), duration_to_string(time(NULL) - entries[i].start), entries[i].comment);
     }
   }
 }
@@ -178,11 +183,27 @@ void end_entry(struct tk_entry **entries, int entries_count, char *comment)
   }
 }
 
-char *datetime_to_string(time_t time)
+void entry_status(struct tk_entry *entries, int entries_count)
 {
-  char *buffer = malloc(26 * sizeof(char));
+  if (entries_count == 0 || entries[entries_count - 1].end != 0) {
+    fprintf(stderr, "You have to start a new entry, before display the status\n");
+    exit(ENTRY_ERROR);
+  }
+  printf("(%03x) S: %s   D: (%s)   (%s)\n", entries_count - 1, datetime_to_string(entries[entries_count-1].start, false), duration_to_string(time(NULL) - entries[entries_count-1].start), entries[entries_count - 1].comment);
+
+  
+}
+
+char *datetime_to_string(time_t time, bool with_year)
+{
+  char *buffer = malloc(19 * sizeof(char));
   struct tm *tm_time = localtime(&time);
-  strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_time);
+  if(with_year) {
+    strftime(buffer, 19, "%Y-%m-%d %H:%M:%S", tm_time);
+  }
+  else {
+    strftime(buffer, 19, "%m-%d %H:%M:%S", tm_time);
+  }
   return buffer;
 }
 
