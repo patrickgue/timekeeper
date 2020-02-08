@@ -218,5 +218,5 @@ char *duration_to_string(time_t secs)
 
 void usage()
 {
-  // to be implemented
+  /* to be implemented */
 }
