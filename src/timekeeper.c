@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     }
     store_tk_entries(entries, entries_count);
   }
-  else if(strcmp(argv[1], "end") == 0) {
+  else if(strcmp(argv[1], "stop") == 0) {
     if(argc == 2) {
       end_entry(&entries, entries_count, "");
     }
