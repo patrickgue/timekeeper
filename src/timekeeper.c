@@ -16,9 +16,22 @@ int main(int argc, char **argv)
     usage();
     exit(ARGS_ERROR);
   }
+
+  /* check if history file exists. If not, create it */
+  FILE *test_file = fopen("./test/example.tkhistory", "r");
+  if (!test_file) {
+    test_file = fopen("./test/example.tkhistory", "w");
+    if(test_file) {
+      fclose(test_file);
+    }
+    else {
+      fprintf(stderr,"Unable to create history file\n");
+      exit(IO_ERROR);
+    }
+  }
   
   struct tk_entry *entries = malloc(0);
-  FILE *f = fopen("./test/example.tkhistory","rw");
+  FILE *f = fopen("./test/example.tkhistory","r");
   int length;
   int entries_count;
   char *buffer;
