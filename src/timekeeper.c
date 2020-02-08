@@ -72,6 +72,17 @@ int main(int argc, char **argv)
     }
     store_tk_entries(entries, entries_count);
   }
+  else if(strcmp(argv[1], "new") == 0) {
+    if(argc == 2) {
+      end_entry(&entries, entries_count, "");
+      entries_count = start_entry(&entries, entries_count, "");
+    }
+    else {
+      end_entry(&entries, entries_count, "");
+      entries_count = start_entry(&entries, entries_count, argv[2]);
+    }
+    store_tk_entries(entries, entries_count);
+  }
 
 
   free(entries);
