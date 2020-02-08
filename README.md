@@ -36,7 +36,8 @@ Display all entries:
 ```$ tk list 
 (000) S: 02-08 10:29:02   E: 02-08 12:09:36   D: 01:40:34 (Implement feature XYZ of project ABC)
 (001) S: 02-08 12:22:56   E: 02-08 13:17:47   D: 00:54:51 (Implement another feature of project ABC)
-(002) S: 02-08 13:17:47   Current             D: 00:01:17 (Implement different feature of project ABC)```
+(002) S: 02-08 13:17:47   Current             D: 00:01:17 (Implement different feature of project ABC)
+```
 
 
 **Status:**
