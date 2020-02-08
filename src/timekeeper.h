@@ -27,7 +27,7 @@ struct tk_entry {
 int parse_tk_entries(char *, struct tk_entry **);
 void store_tk_entries(struct tk_entry *, int);
 void list_entries(struct tk_entry *, int);
-char *time_to_string(time_t);
+char *datetime_to_string(time_t);
 
 int start_entry(struct tk_entry **, int, char *);
 void end_entry(struct tk_entry **, int, char *);

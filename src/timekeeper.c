@@ -135,7 +135,7 @@ void list_entries(struct tk_entry *entries, int entries_count)
 {
   int i;
   for(i = 0; i < entries_count; i++) {
-    printf("(%2i) S: %s   E: %s  (%s)\n", i, time_to_string(entries[i].start), time_to_string(entries[i].end), entries[i].comment);
+    printf("(%2i) S: %s   E: %s  (%s)\n", i, datetime_to_string(entries[i].start), datetime_to_string(entries[i].end), entries[i].comment);
   }
 }
 
@@ -167,7 +167,7 @@ void end_entry(struct tk_entry **entries, int entries_count, char *comment)
   }
 }
 
-char *time_to_string(time_t time)
+char *datetime_to_string(time_t time)
 {
   char *buffer = malloc(26 * sizeof(char));
   struct tm *tm_time = localtime(&time);
