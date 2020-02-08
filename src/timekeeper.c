@@ -20,7 +20,7 @@ int main(int argc, char **argv)
   struct tk_entry *entries = malloc(0);
   FILE *f = fopen("./test/example.tkhistory","rw");
   int length;
-  int nr_of_entries;
+  int entries_count;
   char *buffer;
   if (f) {
     fseek (f, 0, SEEK_END);
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
       fread (buffer, 1, length, f);
     }
     fclose (f);
-    nr_of_entries = parse_tk_entries(buffer, &entries);
+    entries_count = parse_tk_entries(buffer, &entries);
   }
   else {
     fprintf(stderr, "Unable to read file\n");
@@ -39,9 +39,29 @@ int main(int argc, char **argv)
   }
 
   if (strcmp(argv[1], "list") == 0) {
-    list_entries(entries, nr_of_entries);
+    list_entries(entries, entries_count);
+  }
+  else if(strcmp(argv[1], "start") == 0) {
+    if(argc == 2) {
+      entries_count = start_entry(&entries, entries_count, "");
+    }
+    else {
+      entries_count = start_entry(&entries, entries_count, argv[2]);
+    }
+    store_tk_entries(entries, entries_count);
+  }
+  else if(strcmp(argv[1], "end") == 0) {
+    if(argc == 2) {
+      end_entry(&entries, entries_count, "");
+    }
+    else {
+      end_entry(&entries, entries_count, argv[2]);
+    }
+    store_tk_entries(entries, entries_count);
   }
 
+
+  free(entries);
   return NO_ERROR;
 }
 
@@ -72,12 +92,54 @@ int parse_tk_entries(char *string, struct tk_entry **entries)
   return entries_count;
 }
 
+void store_tk_entries(struct tk_entry *entries, int entries_count) {
+  int i;
+  FILE *f = fopen("./test/example.tkhistory", "w");
+  if(f) {
+    for(i = 0; i < entries_count; i++) {
+      fprintf(f, "%ld,%ld,%s\n",entries[i].start, entries[i].end, entries[i].comment);
+    }
+    fclose(f);
+  }
+  else {
+    fprintf(stderr, "Could not open file to store entries\n");
+    exit(IO_ERROR);
+  }
+}
 
 void list_entries(struct tk_entry *entries, int entries_count)
 {
   int i;
   for(i = 0; i < entries_count; i++) {
     printf("(%2i) S: %s   E: %s  (%s)\n", i, time_to_string(entries[i].start), time_to_string(entries[i].end), entries[i].comment);
+  }
+}
+
+int start_entry(struct tk_entry **entries, int entries_count, char *comment)
+{
+  if (entries_count > 0 && (*entries)[entries_count - 1].end == 0) {
+    fprintf(stderr, "You have to end your current entry first, before you can start a new one\n");
+    exit(ENTRY_ERROR);
+  }
+  entries_count++;
+  (*entries) = realloc(*entries, sizeof(struct tk_entry) * entries_count);
+  (*entries)[entries_count - 1].start = time(NULL);
+  (*entries)[entries_count - 1].end = 0;
+  strcpy((*entries)[entries_count - 1].comment, comment);
+  
+  return entries_count;
+}
+
+void end_entry(struct tk_entry **entries, int entries_count, char *comment)
+{
+  if (entries_count == 0 || (*entries)[entries_count - 1].end != 0) {
+    fprintf(stderr, "You have to start a new entry, before you can end one\n");
+    exit(ENTRY_ERROR);
+  }
+
+  (*entries)[entries_count - 1].end = time(NULL);
+  if(strlen(comment) > 0) {
+    strcpy((*entries)[entries_count - 1].comment, comment);
   }
 }
 

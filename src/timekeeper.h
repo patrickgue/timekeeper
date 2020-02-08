@@ -9,8 +9,9 @@ as published by Sam Hocevar. See the COPYING file for more details.
 
 #define NO_ERROR 0
 #define ARGS_ERROR 1
-#define IO_ERROR 2
-#define UNKN_ERROR 3
+#define ENTRY_ERROR 2
+#define IO_ERROR 3
+#define UNKN_ERROR 4
 
 #define DATE_TIME_FORMAT "%Y:%m:%d %H:%M:%S";
 
@@ -24,8 +25,15 @@ struct tk_entry {
 };
 
 int parse_tk_entries(char *, struct tk_entry **);
+void store_tk_entries(struct tk_entry *, int);
 void list_entries(struct tk_entry *, int);
 char *time_to_string(time_t);
+
+int start_entry(struct tk_entry **, int, char *);
+void end_entry(struct tk_entry **, int, char *);
+
+
+
 void usage();
 
 #endif /* TIMEKEEPER_H */
