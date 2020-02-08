@@ -135,7 +135,12 @@ void list_entries(struct tk_entry *entries, int entries_count)
 {
   int i;
   for(i = 0; i < entries_count; i++) {
-    printf("(%2i) S: %s   E: %s  (%s)\n", i, datetime_to_string(entries[i].start), datetime_to_string(entries[i].end), entries[i].comment);
+    if(entries[i].end != 0) {
+      printf("(%2i) S: %s   E: %s  (%s)\n", i, datetime_to_string(entries[i].start), datetime_to_string(entries[i].end), entries[i].comment);
+    }
+    else {
+      printf("(%2i) S: %s   D: (%s)           (%s)\n", i, datetime_to_string(entries[i].start), duration_to_string(time(NULL) - entries[i].start), entries[i].comment);
+    }
   }
 }
 
@@ -172,6 +177,14 @@ char *datetime_to_string(time_t time)
   char *buffer = malloc(26 * sizeof(char));
   struct tm *tm_time = localtime(&time);
   strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_time);
+  return buffer;
+}
+
+/* can't use strftime because UNIX epoche starts on 01:00:00 and not 00:00:00 */
+char *duration_to_string(time_t secs)
+{
+  char *buffer = malloc(9 * sizeof(char));
+  sprintf(buffer, "%02ld:%02ld:%02ld", secs / 3600, (secs / 60) % 60, secs % 60);
   return buffer;
 }
 
